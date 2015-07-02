@@ -12,7 +12,20 @@ function indent() {
 
 unset GIT_DIR
 
-for BUILDPACK in $(cat $1/.buildpacks); do
+# Set environment directory
+env_dir=$3
+# Find the project name
+PROJECT=$(cat $env_dir/PROJECT)
+echo "Running project: $PROJECT"
+
+# If the PROJECT config variable is not set, then exit
+if [ -z "$PROJECT" ]; then
+  echo "ERROR: Please set the heroku config variable PROJECT to the project name you want to run."
+  exit 1
+fi
+
+for BUILDPACK in "$(cat $1/.buildpacks-$PROJECT)"; do
+  echo "Reading from buildpack: ./buildpacks-$PROJECT"
   dir=$(mktemp -t buildpackXXXXX)
   rm -rf $dir
 
